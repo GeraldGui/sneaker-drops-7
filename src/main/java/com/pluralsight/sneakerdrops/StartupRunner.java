@@ -51,6 +51,9 @@ public class StartupRunner implements CommandLineRunner {
             System.out.println("4) Find by year");
             System.out.println("5) Search");
             System.out.println("6) Find by Id");
+            System.out.println("7) Add sneaker");
+            System.out.println("8) Update sneaker");
+            System.out.println("9) Delete sneaker");
             System.out.println("0) Quit");
             System.out.print("Your Choice: ");
 
@@ -61,6 +64,9 @@ public class StartupRunner implements CommandLineRunner {
                 case 4 -> findByYear(scanner);
                 case 5 -> findBySearch(scanner);
                 case 6 -> viewById(scanner);
+                case 7 -> addSneaker(scanner);
+                case 8 -> updateSneakerPrice(scanner);
+                case 9 -> deleteSneaker(scanner);
                 case 0 -> running = false;
                 default -> System.out.println("Wrong Input!");
             }
@@ -127,6 +133,41 @@ public class StartupRunner implements CommandLineRunner {
             System.out.println("No sneaker with that id.");
         } else {
             System.out.printf("%d - %s ($%.2f)", sneaker.getId(), sneaker.getModel(), sneaker.getPrice());
+        }
+    }
+
+    private void addSneaker(Scanner scanner) {
+        scanner.nextLine();
+        System.out.print("Model: ");
+        String model = scanner.nextLine();
+        System.out.print("Price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Year: ");
+        int year = scanner.nextInt();
+
+        sneakerRepository.save(new Sneaker(model, price, year));
+        System.out.println("Added Sneaker!");
+    }
+
+    private void updateSneakerPrice(Scanner scanner) {
+        System.out.print("Sneaker id: ");
+        long id = scanner.nextLong();
+
+        Sneaker sneaker = sneakerRepository.findById(id).orElseThrow(() -> new RuntimeException("No game with id " + id));
+        System.out.print("New price: ");
+        sneaker.setPrice(scanner.nextDouble());
+        sneakerRepository.save(sneaker);
+        System.out.println("Updated Price!");
+    }
+
+    private void deleteSneaker(Scanner scanner) {
+        System.out.print("Sneaker id: ");
+        long id = scanner.nextLong();
+        if (sneakerRepository.existsById(id)) {
+            sneakerRepository.deleteById(id);
+            System.out.println("Deleted Sneaker!");
+        } else {
+            System.out.println("No sneaker with that id.");
         }
     }
 
